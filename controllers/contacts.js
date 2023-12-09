@@ -60,10 +60,15 @@ const putContact = async (req, res) => {
 };
 
 const patchFavorite = async (req, res) => {
+  const { _id: owner } = req.user;
   const { contactId } = req.params;
-  const result = await Contact.findByIdAndUpdate(contactId, req.body, {
-    new: true,
-  });
+  const result = await Contact.findByIdAndUpdate(
+    { owner, _id: contactId },
+    req.body,
+    {
+      new: true,
+    }
+  );
   if (!result) {
     throw HttpError(404, 'Not found');
   }
