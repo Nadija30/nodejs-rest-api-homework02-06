@@ -79,6 +79,9 @@ const patchSubscription = async (req, res) => {
 };
 
 const updateAvatar = async (req, res) => {
+  if (!req.file) {
+    res.status(400).json({ message: 'No file uploaded' });
+  }
   const { _id } = req.user;
   const { path: tempUpload, originalname } = req.file;
   const filename = `${_id}_${originalname}`;

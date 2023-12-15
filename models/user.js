@@ -49,6 +49,7 @@ const loginSchema = Joi.object({
 const patchSubscriptionSchema = Joi.object({
   subscription: Joi.string().valid('starter', 'pro', 'business').required(),
 });
+
 const schemas = {
   registerSchema,
   loginSchema,

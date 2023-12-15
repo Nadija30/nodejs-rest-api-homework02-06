@@ -1,43 +1,34 @@
-/* 
-Робила за цим посиланням, але не знаю в чому причина, що не вихадить 
-https://www.freecodecamp.org/news/how-to-test-in-express-and-mongoose-apps/ 
-
-{
-"password": "123456",
-"email": "nadiia@ukr.net"
-}
-
-відповідь повина мати статус-код 200
-у відповіді повинен повертатися токен
-у відповіді повинен повертатися об'єкт user з 2 полями email и subscription з типом даних String
-
-*/
 const mongoose = require('mongoose');
+const {
+  beforeAll,
+  afterAll,
+  expect,
+  describe,
+  test,
+} = require('@jest/globals');
 const request = require('supertest');
 const app = require('../app');
 
 require('dotenv').config();
+mongoose.set('strictQuery', false);
 
-/* Connecting to the database before each test. */
-beforeEach(async () => {
-  await mongoose.connect(process.env.DB_HOST);
-});
-
-/* Closing database connection after each test. */
-afterEach(async () => {
-  await mongoose.connection.close();
-});
-
-describe('POST /api/users/login', () => {
-  it('should login a user', async () => {
-    const res = await request(app).post('/api/users/login').send({
-      password: '123456',
-      email: 'nadiia@ukr.net',
-    });
-    expect(res.statusCode).toBe(200);
-    expect(res.body.user).toBe({
-      email: 'nadiia@ukr.net',
-      subscription: 'starter',
-    });
+describe('POST /login', () => {
+  beforeAll(async () => {
+    await mongoose.connect(process.env.DB_HOST);
+  });
+  const user = {
+    password: '123456',
+    email: 'nadiia@ukr.net',
+  };
+  test('It should login user and return token', async () => {
+    const logResponse = await request(app).post('users/login').send(user);
+    expect(logResponse.status).toBe(200);
+    expect(logResponse.body.token).toBeTruthy();
+    expect(logResponse.body.user).toBeInstanceOf(Object);
+    expect(typeof logResponse.body.user.email).toBe('string');
+    expect(typeof logResponse.body.user.subscribtion).toBe('string');
+  });
+  afterAll(async () => {
+    await mongoose.connection.close();
   });
 });
