@@ -21,12 +21,12 @@ describe('POST /login', () => {
     email: 'nadiia@ukr.net',
   };
   test('It should login user and return token', async () => {
-    const logResponse = await request(app).post('users/login').send(user);
+    const logResponse = await request(app).post('/users/login').send(user);
     expect(logResponse.status).toBe(200);
     expect(logResponse.body.token).toBeTruthy();
     expect(logResponse.body.user).toBeInstanceOf(Object);
     expect(typeof logResponse.body.user.email).toBe('string');
-    expect(typeof logResponse.body.user.subscribtion).toBe('string');
+    expect(typeof logResponse.body.user.subscription).toBe('string');
   });
   afterAll(async () => {
     await mongoose.connection.close();
